@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Providers;
 
+use App\MoonShine\Resources\ArticleResource;
+use App\MoonShine\Resources\CategoryResource;
 use MoonShine\Providers\MoonShineApplicationServiceProvider;
 use MoonShine\MoonShine;
 use MoonShine\Menu\MenuGroup;
@@ -27,18 +29,30 @@ class MoonShineServiceProvider extends MoonShineApplicationServiceProvider
     {
         return [
             MenuGroup::make(static fn() => __('moonshine::ui.resource.system'), [
-               MenuItem::make(
-                   static fn() => __('moonshine::ui.resource.admins_title'),
-                   new MoonShineUserResource()
-               ),
-               MenuItem::make(
-                   static fn() => __('moonshine::ui.resource.role_title'),
-                   new MoonShineUserRoleResource()
-               ),
+                MenuItem::make(
+                    static fn() => __('moonshine::ui.resource.admins_title'),
+                    new MoonShineUserResource()
+                ),
+                MenuItem::make(
+                    static fn() => __('moonshine::ui.resource.role_title'),
+                    new MoonShineUserRoleResource()
+                ),
             ])->canSee(fn() => request()->routeIs('moonshine.*')),
 
+            MenuGroup::make('Статьи', [
+                MenuItem::make(
+                    'Категории',
+                    new CategoryResource()
+                ),
+                MenuItem::make(
+                    'Статьи',
+                    new ArticleResource()
+                ),
+            ])->canSee(fn() => request()->routeIs('moonshine.*')),
+
+
             MenuItem::make('Статьи', fn() => route('articles.index'))
-               ->canSee(fn() => !request()->routeIs('moonshine.*')),
+                ->canSee(fn() => !request()->routeIs('moonshine.*')),
         ];
     }
 
